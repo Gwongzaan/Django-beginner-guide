@@ -1,0 +1,7 @@
+Django
+Pillow
+redis
+markdown
+Pillow
+awesome-slugify
+sorl-thumbnail

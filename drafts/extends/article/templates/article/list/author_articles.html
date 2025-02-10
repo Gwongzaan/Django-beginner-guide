@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+<br />
+{% load static %}
+<br>
+{% load article_tags %}
+<br />
+{% block title %}articles{% endblock %}
+<br />
+{% block content %}
+<div class="row text-center vertical-middle-sm">
+  <h1>reading</h1>
+</div>
+<div class="container">
+  <div class="col-md-8">
+    {% for article in articles %}
+    <div class="list-group">
+      <a href="{{article.get_url_path}}" class="list-group-item active">
+        <h4 class="list-group-item-heading">{{article.title}}</h4>
+      </a>
+      <p class="list-group-item-text">
+        author：
+        <a href="{% url 'article:author_articles' article.author.username %}">
+          {{article.author.username}}
+        </a>
+      </p>
+      <p class="list-group-item-text">
+        abstract： {{article.body|slice:'70'|linebreaks}}
+      </p>
+    </div>
+    {% endfor %} {% include "article/paginator.html" %}
+  </div>
+  <div class="col-md-4">
+    <div>
+      {% if userinfo.photo %}
+      <img
+        src="{{ userinfo.photo | striptags }}"
+        class="img-circle"
+        id="my_photo"
+        name="user_face"
+        style="width: 300px"
+      />
+      {% else %}
+      <img
+        name="user_face"
+        src="{% static 'images/newton.jpg' %}"
+        class="img-circle"
+        id="my_photo"
+        style="width: 300px"
+      />
+      {% endif %}
+    </div>
+    <div>
+      <p>{{ user.username }}</p>
+      <p> he posted {% author_total_articles user %} articles</p>
+      {% if userinfo %}
+      <p>{{ userinfo.company }}</p>
+      <p>{{ userinfo.aboutme }}</p>
+      {% else %}
+      <p>，no articles。</p>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,158 @@
+    {% extends "base.html" %}
+<br>
+    {% load static %}
+
+    {% load article_tags %}
+<br>
+    {% block title %}{{ article.title }}{% endblock %}
+<br>
+    {% block content %}
+<br>
+    {%  with  total_likes=article.users_like.count  users_like=article.users_like.all  %}
+    <div class="container">
+        <header>
+          <h1>{{ article.title }}</h1>
+          <p>
+          <a href="{% url 'article:author_articles' article.author.username %}">
+              {{ article.author.username }}
+          </a>
+          <span style="margin-left:20px" class="glyphicon glyphicon-thumbs-up">
+              {{ total_likes }} like{{ total_likes | pluralize }}
+          </span>   
+
+          <span style="margin-left:20px" class="glyphicon glyphicon-thumbs-up">
+              {{ total_views}} view{{ total_views| pluralize }}
+          </span>   
+
+      </p>
+        <p>
+            <span style='margin-right: 10px'>tags</span>
+            {{article.article_tag.all | join:", "}}
+        </p>
+      </header>
+      <link rel="stylesheet" href="{% static 'editor/css/editormd.preview.css' %}" />
+      <div id='editormd-view'>
+          <textarea id="append-test" style="display:none; ">
+    {{ article.body | markdown }}
+           </textarea>
+      </div>
+      <div>
+          <p class="text-center">
+              <a onclick="like_article({{article.id}}, 'like')" href="#">
+                <span class="glyphicon glyphicon-thumbs-up">like</span>
+              </a>   
+              <a onclick="like_article({{article.id}}, 'unlike')" href="#">
+                <span style="margin-left: 15px; "
+                      class="glyphicon glyphicon-thumbs-down">unlike</span>
+              </a>   
+          </p>
+      </div>
+      <div>
+          <p class="text-center"><strong>readers like this post</strong></p>
+          {% for user in article.users_like.all %}   
+          <p class="text-center">{{ user.username }}</p>
+          {% empty %}
+          <p class="text-center">there is no comment yet</p>
+          {% endfor %}
+      </div>
+
+
+<div>
+        <h3><span class="glyphicon glyphicon-bullhorn"></span>there are {{ comments.count }} comments on this article</h3>
+        {% for comment in article.comments.all %}
+        <div>
+            <p><strong>{{ comment.commentator }}</strong>说:</p>
+            <p style="margin-left:40px;">{{ comment.body }}</p> 
+        </div>
+        {% empty %} 
+        <p>no comments</p> 
+        {% endfor %}
+        
+        <h3><span class="glyphicon glyphicon-send"></span>write comments after reading</h3>
+        <form action="." method="post" class="form-horizontal" role="form">{% csrf_token %}
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-2 control-label">commentator</label> 
+                <div class="col-sm-10">
+                    {{ comment_form.commentator}} 
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="inputEmail3" class="col-sm-2 control-label">comment</label> 
+                <div class="col-sm-10">
+                    {{ comment_form.body }} 
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <p><input type="submit" name="" value="comment" class="btn btn-primary"></p> 
+                </div>
+            </div>
+        </form>
+    </div>
+
+        <div class="col-md-3">
+            <p class="text-center"><h3>most viewed</h3></p> 
+
+            <ol>
+                {% for article_rank in most_viewed %} 
+                <li>
+                    <a href="{{article_rank.get_url_path}}">{{ article_rank.title }}</a> 
+                </li>
+                {% endfor %} 
+            </ol>
+            <hr>
+            <p class='text-center'><hr3>latest articles</hr3></p>
+            {% latest_articles %}
+
+            <hr>
+            <p class='text-center'><h3>most commented articles</h3></p>
+            {% most_commented_articles as most_comments %}
+            <ul>
+                {% for comment_article in most_comments %}
+                    <li>
+                <a href='{comment_article.get_url_path}}'>{{comment_article.title}}</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <script src='{% static "js/jquery.js" %}'></script>
+    <script src='{% static "editor/lib/marked.min.js" %}'></script>
+    <script src='{% static "editor/lib/prettify.min.js" %}'></script>
+    <script src='{% static "editor/lib/raphael.min.js" %}'></script>
+    <script src='{% static "editor/lib/underscore.min.js" %}'></script>
+    <script src='{% static "editor/lib/sequence-diagram.min.js" %}'></script>
+    <script src='{% static "editor/lib/flowchart.min.js" %}''></script>
+    <script src='{% static "editor/lib/jquery.flowchart.min.js" %}'></script>
+    <script src='{% static "editor/editormd.js" %}'></script>
+    <script type="text/javascript" src="{% static 'js/layer.js'%}"></script>  
+    <script type="text/javascript">
+    $(function(){
+        editormd.markdownToHTML("editormd-view", {
+          htmlDecode      : "style, script, iframe",  // you can filter tags decode
+          emoji           : true,
+          taskList       : true,
+          tex            : true,  
+          flowChart       : true, 
+          sequenceDiagram : true, 
+       });
+    });
+    function like_article(id, action){   
+       $.ajax({
+          url: "{% url 'article:like_article' %}",
+          type: "POST",
+          data: {"id":id, "action":action},
+          success: function(e){
+              if(e=="1"){
+                  layer.msg("thank you for thumb up");
+                  window.location.reload();
+              }else{
+                  layer.msg("continer");
+                  window.location.reload();
+              }
+          },
+       });
+    }
+    </script>
+    {% endwith %}
+    {% endblock %}

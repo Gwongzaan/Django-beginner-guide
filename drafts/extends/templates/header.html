@@ -1,0 +1,44 @@
+{% load static %}
+
+<div class="container">
+  <nav class="navbar navbar-default" role="navigation">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="https://www.google.com">
+        <img src="{% static '/images/logo.png' %}" width="100px" />
+      </a>
+    </div>
+    <div>
+      <ul class="nav navbar-nav" role="navigation">
+        <li><a href="{% url 'home'%}">HOME</a></li>
+        <li><a href="{% url 'blog:titles' %}">BLOG</a></li>
+        <li><a href="{% url 'article:article_titles' %}">Article</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        {% if user.is_authenticated %}
+          <li><a href="#">{{user.username}}</a></li>
+
+        <li>
+
+          <a href="{% url 'account:password_change' %}">change password</a>
+
+        </li>
+        <liv>
+
+          <a href="{% url 'article:article_column' %}">manage articvles</a>
+        </liv>
+
+          <form id='logout' action="{% url 'account:user_logout' %}" method='post'>
+            {% csrf_token %}
+            <li>
+            <a href="" onclick="document.getElementById('logout').submit();return false;">Logout</a>
+            </li>
+          </form>
+
+        {% else %}
+        <li><a href="{% url 'account:user_login' %}">LOGIN</a></li>
+        <li><a href="{% url 'account:user_register' %}">Register</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </nav>
+</div>

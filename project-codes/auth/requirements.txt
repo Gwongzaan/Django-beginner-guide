@@ -1,0 +1,10 @@
+Django
+djangorestframework
+markdown
+Django-filter
+pillow
+Django-guardian
+coreapi
+twilio
+
+Django-cors-headers

@@ -1,0 +1,21 @@
+{% load static%} 
+<div class="container">   
+    <nav class="navbar navbar-default" role="navigation"> 
+        <div class="navbar-header">
+            <a class="navbar-brand" href="">
+                <img width="100px" src="{% static 'images/logo.png' %}">
+            </a> 
+        </div>
+        <div>
+            <ul class="nav navbar-nav" role="tablist">
+                <li><a href="{% url 'article:article_column' %}">manage articles</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right" style="margin-right:10px"> 
+                <li><a href="{% url 'blog:titles' %}">landing page</a></li> 
+                <li><span>{{ user.username }}</li>
+                <li><a href="{% url 'account:user_logout' %}">Logout</a></li>    
+                <li><a href="{% url 'image:list_image' %}">manage images</a></li>
+            </ul> 
+        </div>    
+    </nav>              
+</div>
